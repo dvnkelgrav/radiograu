@@ -8,20 +8,60 @@
   <style>
     body {
       margin: 0;
-      background-color: #e0e0e0;
-      font-family: sans-serif;
+    }
+    .startscreen {
+      position: fixed;
+      inset: 0;
+      background: #d9d9d9;
+      z-index: 1000;
+      transition: opacity 0.5s ease;
+    }
+    .startscreen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .startscreen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .maincontent {
+      display: none;
+      height: 100vh;
+      background-color: #f0f0f0;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      color: #333;
     }
-    h1 {
-      font-size: 2rem;
+    .maincontent.visible {
+      display: flex;
     }
   </style>
 </head>
 <body>
-  <h1>radiograu – Audiowalk Leipzig</h1>
+  <div class="startscreen" id="startscreen">
+    <img src="startbild.jpg" alt="Startbild">
+  </div>
+
+  <div class="maincontent" id="maincontent">
+    <p>Hier beginnt der eigentliche Inhalt …</p>
+  </div>
+
+  <script>
+    const startscreen = document.getElementById('startscreen');
+    const maincontent = document.getElementById('maincontent');
+
+    function hideStartscreen() {
+      startscreen.classList.add('hidden');
+      setTimeout(() => {
+        startscreen.style.display = 'none';
+        maincontent.classList.add('visible');
+      }, 500);
+    }
+
+    startscreen.addEventListener('click', hideStartscreen);
+    startscreen.addEventListener('touchstart', hideStartscreen);
+  </script>
 </body>
 </html>
