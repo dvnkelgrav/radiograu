@@ -54,29 +54,5 @@
     
   </style>
 </head>
-<body>
-  <div class="startscreen" id="startscreen">
-    <img src="startbild.jpg" alt="Startbild">
-  </div>
 
-  <div class="maincontent" id="maincontent">
-    <p>Hier beginnt der eigentliche Inhalt …</p>
-  </div>
-
-  <script>
-    const startscreen = document.getElementById('startscreen');
-    const maincontent = document.getElementById('maincontent');
-
-    function hideStartscreen() {
-      startscreen.classList.add('hidden');
-      setTimeout(() => {
-        startscreen.style.display = 'none';
-        maincontent.classList.add('visible');
-      }, 500);
-    }
-
-    startscreen.addEventListener('click', hideStartscreen);
-    startscreen.addEventListener('touchstart', hideStartscreen);
-  </script>
-</body>
 </html>
