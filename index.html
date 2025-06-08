@@ -31,6 +31,24 @@
       height: 100vh;
       overflow: hidden;
     }
+    
+    #container {
+      position: relative;
+      width: 100%;
+      max-width: 750px;
+      margin: 0 auto;
+    }
+    #dot {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: gray;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      display: none;
+    }
+
     svg {
       width: 100%;
       height: 100%;
@@ -42,10 +60,11 @@
     <img src="startbild.jpg" alt="Startbild">
   </div>
 
- <div id="bahnsteig-wrapper">
+ <div id="container">
+  <div id="bahnsteig-wrapper">
   <img src="bahnsteig.png" alt="Bahnsteigplan" style="width:100%; height:100vh; object-fit:contain;" />
-</div>
-
+  <div id="dot"></div>
+  </div>
 
   <script>
     const startscreen = document.getElementById('startscreen');
@@ -58,5 +77,44 @@
     startscreen.addEventListener('click', hideStartscreen);
     startscreen.addEventListener('touchstart', hideStartscreen);
   </script>
+
+  <script>
+    const refPoints = {
+      topLeft:     { x: 352, y: 345, lat: 51.3298468, lon: 12.3813407 },
+      topRight:    { x: 398, y: 345, lat: 51.3289872, lon: 12.3819344 },
+      bottomLeft:  { x: 365, y: 1011, lat: 51.3298661, lon: 12.3813216 },
+      bottomRight: { x: 428, y: 1001, lat: 51.3299233, lon: 12.3811975 }
+    };
+
+    function gpsToImage(lat, lon) {
+      const lonRatio = (lon - refPoints.topLeft.lon) / (refPoints.topRight.lon - refPoints.topLeft.lon);
+      const latRatio = (lat - refPoints.topLeft.lat) / (refPoints.bottomLeft.lat - refPoints.topLeft.lat);
+
+      const xTop = refPoints.topLeft.x + lonRatio * (refPoints.topRight.x - refPoints.topLeft.x);
+      const xBottom = refPoints.bottomLeft.x + lonRatio * (refPoints.bottomRight.x - refPoints.bottomLeft.x);
+      const yLeft = refPoints.topLeft.y + latRatio * (refPoints.bottomLeft.y - refPoints.topLeft.y);
+      const yRight = refPoints.topRight.y + latRatio * (refPoints.bottomRight.y - refPoints.topRight.y);
+
+      const x = xTop + latRatio * (xBottom - xTop);
+      const y = yLeft + lonRatio * (yRight - yLeft);
+      return { x, y };
+    }
+
+    function showPosition(position) {
+      const { latitude, longitude } = position.coords;
+      const dot = document.getElementById('dot');
+      const coords = gpsToImage(latitude, longitude);
+      dot.style.left = coords.x + 'px';
+      dot.style.top = coords.y + 'px';
+      dot.style.display = 'block';
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition, error => {
+        console.warn('Standort konnte nicht abgerufen werden.');
+      });
+    }
+  </script>
+
 </body>
 </html>
